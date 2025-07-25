@@ -10,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Annotation @Service는 @Component와 같다, Spring Bean으로 등록한다는 뜻.
@@ -74,24 +73,40 @@ public class MemoServiceImpl implements MemoService {
         return new MemoResponseDto(memo);
     }
 
-    @Transactional
-    @Override
-    public MemoResponseDto updateTitle(Long id, String title, String contents) {
+//    @Transactional
+//    @Override
+//    public MemoResponseDto updateTitle(Long id, String title, String contents) {
+//
+//        // 필수값 검증
+//        if (title == null || contents != null) {
+//            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The title and content are required values.");
+//        }
+//
+//        // memo 제목 수정
+//        int updatedRow = memoRepository.updateTitle(id, title);
+//        // 수정된 row가 0개 라면
+//        if (updatedRow == 0) {
+//            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No data has been modified.");
+//        }
+//
+//        Memo memo = memoRepository.findMemoByIdOrElseThrow(id);
+//
+//        return new MemoResponseDto(memo);
+//    }
 
-        // 필수값 검증
-        if (title == null || contents != null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The title and content are required values.");
+    @Override
+    public MemoResponseDto updateTitle(Long id, String title) {
+        if (title == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The title is required.");
         }
 
-        // memo 제목 수정
         int updatedRow = memoRepository.updateTitle(id, title);
-        // 수정된 row가 0개 라면
+
         if (updatedRow == 0) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No data has been modified.");
         }
 
         Memo memo = memoRepository.findMemoByIdOrElseThrow(id);
-
         return new MemoResponseDto(memo);
     }
 

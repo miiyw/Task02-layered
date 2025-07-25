@@ -2,7 +2,7 @@ package com.example.layered.controller;
 
 import com.example.layered.dto.MemoRequestDto;
 import com.example.layered.dto.MemoResponseDto;
-import com.example.layered.entity.Memo;
+import com.example.layered.dto.MemoTitleUpdateDto;
 import com.example.layered.service.MemoService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -10,10 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @RestController // @Controller + @ResponseBody
@@ -44,10 +41,12 @@ public class MemoController {
      * @return : {@link List<MemoResponseDto>} JSON 응답
      */
     @GetMapping
-    public List<MemoResponseDto> findAllMemos() {
+    public ResponseEntity<List<MemoResponseDto>> findAllMemos() {
+        List<MemoResponseDto> memoList = memoService.findAllMemos();
 
-        return memoService.findAllMemos();
+        return ResponseEntity.ok(memoList); // 200 OK + JSON 배열
     }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<MemoResponseDto> findMemoById(@PathVariable Long id) {
@@ -66,9 +65,10 @@ public class MemoController {
     @PatchMapping("/{id}")
     public ResponseEntity<MemoResponseDto> updateTitle(
             @PathVariable Long id,
-            @RequestBody MemoRequestDto dto
+            @RequestBody MemoTitleUpdateDto dto
     ) {
-        return new ResponseEntity<>(memoService.updateTitle(id, dto.getTitle(), dto.getContents()), HttpStatus.OK);
+        //return new ResponseEntity<>(memoService.updateTitle(id, dto.getTitle(), dto.getContents()), HttpStatus.OK);
+        return new ResponseEntity<>(memoService.updateTitle(id, dto.getTitle()), HttpStatus.OK);
     }
 
     /**
@@ -79,15 +79,7 @@ public class MemoController {
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteMemo(@PathVariable Long id) {
-
-        try {
-            memoService.deleteMemo(id);
-        } catch (ResponseStatusException e) {
-            log.error(e.getReason());
-        }
-
-        // 성공한 경우
+        memoService.deleteMemo(id);  // 존재하지 않으면 Service에서 404 던짐
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
-

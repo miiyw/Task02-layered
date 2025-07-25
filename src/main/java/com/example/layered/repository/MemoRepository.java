@@ -17,6 +17,7 @@ public interface MemoRepository {
 
     int updateMemo(Long id, String title, String contents);
 
+    //int updateTitle(Long id, String title, String contents);
     int updateTitle(Long id, String title);
 
     int deleteMemo(Long id);
